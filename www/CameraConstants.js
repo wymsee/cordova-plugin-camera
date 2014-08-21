@@ -49,5 +49,10 @@ module.exports = {
   Direction:{
       BACK: 0,
       FRONT: 1
+  },
+  FlashMode:{
+      OFF: -1,
+      AUTO: 0,
+      ON: 1
   }
 };

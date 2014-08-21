@@ -117,6 +117,7 @@ static NSSet* org_apache_cordova_validArrowDirections;
     cameraPicker.callbackId = callbackId;
     cameraPicker.targetSize = targetSize;
     cameraPicker.cropToSize = NO;
+    cameraPicker.cameraFlashMode = [[arguments objectAtIndex:12] intValue];
     // we need to capture this state for memory warnings that dealloc this object
     cameraPicker.webView = self.webView;
     cameraPicker.popoverSupported = [self popoverSupported];
