@@ -17,18 +17,26 @@
     under the License.
 -->
 
-# org.apache.cordova.camera
+# cordova-plugin-camera
 
-Este plugin proporciona una API para tomar fotografías y por elegir imágenes de biblioteca de imágenes del sistema.
+Este plugin define un global `navigator.camera` objeto que proporciona una API para tomar fotografías y por elegir imágenes de biblioteca de imágenes del sistema.
 
-    cordova plugin add org.apache.cordova.camera
+Aunque el objeto está unido al ámbito global `navigator` , no estará disponible hasta después de la `deviceready` evento.
+
+    document.addEventListener ("deviceready", onDeviceReady, false);
+    function onDeviceReady() {console.log(navigator.camera)};
+    
+
+## Instalación
+
+    Cordova plugin agregar cordova-plugin-camera
     
 
 ## navigator.camera.getPicture
 
 Toma una foto con la cámara, o recupera una foto de Galería de imágenes del dispositivo. La imagen se pasa a la devolución de llamada de éxito como un codificado en base64 `String` , o como el URI para el archivo de imagen. El método se devuelve un `CameraPopoverHandle` objeto que puede utilizarse para volver a colocar el popover de selección de archivo.
 
-    navigator.camera.getPicture( cameraSuccess, cameraError, cameraOptions );
+    navigator.camera.getPicture (cameraSuccess, cameraError, cameraOptions);
     
 
 ### Descripción
@@ -39,15 +47,15 @@ Si `Camera.sourceType` es `Camera.PictureSourceType.PHOTOLIBRARY` o `Camera.Pict
 
 El valor devuelto es enviado a la `cameraSuccess` función de callback, en uno de los formatos siguientes, dependiendo del objeto `cameraOptions` :
 
-*   A `String` que contiene la imagen codificada en base64.
+*   Una `String` que contiene la imagen codificada en base64.
 
-*   A `String` que representa la ubicación del archivo de imagen de almacenamiento local (por defecto).
+*   Una `String` que representa la ubicación del archivo de imagen en almacenamiento local (por defecto).
 
 Puedes hacer lo que quieras con la imagen codificada o URI, por ejemplo:
 
-*   Utilidad de la imagen en un `<img>` etiqueta, como en el ejemplo siguiente
+*   Representar la imagen en una etiqueta de `<img>`, como en el ejemplo siguiente
 
-*   Guardar los datos localmente ( `LocalStorage` , [Lawnchair][1], etc..)
+*   Guardar los datos localmente (`LocalStorage`, [Lawnchair][1], etc.)
 
 *   Enviar los datos a un servidor remoto
 
@@ -57,7 +65,7 @@ Puedes hacer lo que quieras con la imagen codificada o URI, por ejemplo:
 
 ### Plataformas soportadas
 
-*   Amazon fuego OS
+*   Amazon fire OS
 *   Android
 *   BlackBerry 10
 *   Explorador
@@ -96,9 +104,7 @@ Cámara plugin actualmente se implementa mediante [Actividades Web][2].
 
 Incluyendo un JavaScript `alert()` en cualquiera de la devolución de llamada funciones pueden causar problemas. Envuelva la alerta dentro de un `setTimeout()` para permitir que el selector de imagen iOS o popover cerrar completamente antes de la alerta se muestra:
 
-    setTimeout(function() {
-        // do your thing here!
-    }, 0);
+    setTimeout(function() {/ / Haz lo tuyo aquí!}, 0);
     
 
 ### Windows Phone 7 rarezas
@@ -113,48 +119,31 @@ Tizen sólo es compatible con un `destinationType` de `Camera.DestinationType.FI
 
 Tomar una foto y recuperarlo como una imagen codificada en base64:
 
-    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+    navigator.camera.getPicture (onSuccess, onFail, { quality: 50,
         destinationType: Camera.DestinationType.DATA_URL
     });
     
-    function onSuccess(imageData) {
-        var image = document.getElementById('myImage');
-        image.src = "data:image/jpeg;base64," + imageData;
-    }
+    function onSuccess(imageData) {var imagen = document.getElementById('myImage');
+        Image.src = "datos: image / jpeg; base64," + imageData;}
     
-    function onFail(message) {
-        alert('Failed because: ' + message);
-    }
+    function onFail(message) {alert (' falló porque: ' + mensaje);}
     
 
 Tomar una foto y recuperar la ubicación del archivo de la imagen:
 
-    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+    navigator.camera.getPicture (onSuccess, onFail, { quality: 50,
         destinationType: Camera.DestinationType.FILE_URI });
     
-    function onSuccess(imageURI) {
-        var image = document.getElementById('myImage');
-        image.src = imageURI;
-    }
-    
-    function onFail(message) {
-        alert('Failed because: ' + message);
-    }
+    function onSuccess(imageURI) {var imagen = document.getElementById('myImage');
+        Image.src = imageURI;
+    } function onFail(message) {alert (' falló porque: ' + mensaje);}
     
 
 ## CameraOptions
 
 Parámetros opcionales para personalizar la configuración de la cámara.
 
-    { quality : 75,
-      destinationType : Camera.DestinationType.DATA_URL,
-      sourceType : Camera.PictureSourceType.CAMERA,
-      allowEdit : true,
-      encodingType: Camera.EncodingType.JPEG,
-      targetWidth: 100,
-      targetHeight: 100,
-      popoverOptions: CameraPopoverOptions,
-      saveToPhotoAlbum: false };
+    {calidad: destinationType 75,: Camera.DestinationType.DATA_URL, sourceType: Camera.PictureSourceType.CAMERA, allowEdit: true, encodingType: Camera.EncodingType.JPEG, targetWidth: 100, targetHeight: 100, popoverOptions: CameraPopoverOptions, saveToPhotoAlbum: falsa};
     
 
 ### Opciones
@@ -218,19 +207,19 @@ Parámetros opcionales para personalizar la configuración de la cámara.
 
 ### Amazon fuego OS rarezas
 
-*   Cualquier `cameraDirection` valor resultados en una foto orientada hacia atrás.
+*   Cualquier valor de `cameraDirection` da como resultado una foto orientada hacia atrás.
 
 *   Ignora el `allowEdit` parámetro.
 
-*   `Camera.PictureSourceType.PHOTOLIBRARY`y `Camera.PictureSourceType.SAVEDPHOTOALBUM` ambas muestran el mismo álbum de fotos.
+*   `Camera.PictureSourceType.PHOTOLIBRARY` y `Camera.PictureSourceType.SAVEDPHOTOALBUM` Mostrar el mismo álbum de fotos.
 
 ### Rarezas Android
 
-*   Cualquier `cameraDirection` valor resultados en una foto orientada hacia atrás.
+*   Cualquier valor de `cameraDirection` da como resultado una foto orientada hacia atrás.
 
 *   Ignora el `allowEdit` parámetro.
 
-*   `Camera.PictureSourceType.PHOTOLIBRARY`y `Camera.PictureSourceType.SAVEDPHOTOALBUM` ambas muestran el mismo álbum de fotos.
+*   `Camera.PictureSourceType.PHOTOLIBRARY` y `Camera.PictureSourceType.SAVEDPHOTOALBUM` Mostrar el mismo álbum de fotos.
 
 ### BlackBerry 10 rarezas
 
@@ -294,9 +283,7 @@ Parámetros opcionales para personalizar la configuración de la cámara.
 
 onError función callback que proporciona un mensaje de error.
 
-    function(message) {
-        // Show a helpful message
-    }
+    function(Message) {/ / Mostrar un mensaje útil}
     
 
 ### Parámetros
@@ -307,9 +294,7 @@ onError función callback que proporciona un mensaje de error.
 
 onSuccess función callback que proporciona los datos de imagen.
 
-    function(imageData) {
-        // Do something with the image
-    }
+    function(ImageData) {/ / hacer algo con la imagen}
     
 
 ### Parámetros
@@ -318,12 +303,8 @@ onSuccess función callback que proporciona los datos de imagen.
 
 ### Ejemplo
 
-    // Show image
-    //
-    function cameraCallback(imageData) {
-        var image = document.getElementById('myImage');
-        image.src = "data:image/jpeg;base64," + imageData;
-    }
+    Mostrar imagen / / function cameraCallback(imageData) {var imagen = document.getElementById('myImage');
+        Image.src = "datos: image / jpeg; base64," + imageData;}
     
 
 ## CameraPopoverHandle
@@ -348,15 +329,10 @@ Establecer la posición de la popover.
 
 ### Ejemplo
 
-     var cameraPopoverHandle = navigator.camera.getPicture(onSuccess, onFail,
-         { destinationType: Camera.DestinationType.FILE_URI,
-           sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-           popoverOptions: new CameraPopoverOptions(300, 300, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY)
-         });
+     var cameraPopoverHandle = navigator.camera.getPicture (onSuccess, onFail, {destinationType: Camera.DestinationType.FILE_URI, sourceType: Camera.PictureSourceType.PHOTOLIBRARY, popoverOptions: CameraPopoverOptions nuevo (300, 300, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY)});
     
-     // Reposition the popover if the orientation changes.
-     window.onorientationchange = function() {
-         var cameraPopoverOptions = new CameraPopoverOptions(0, 0, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY);
+     Vuelva a colocar el popover si cambia la orientación.
+     Window.onorientationchange = function() {var cameraPopoverOptions = new CameraPopoverOptions (0, 0, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY);
          cameraPopoverHandle.setPosition(cameraPopoverOptions);
      }
     
@@ -365,12 +341,7 @@ Establecer la posición de la popover.
 
 Sólo iOS parámetros que especifican la dirección ancla elemento ubicación y la flecha de la popover al seleccionar imágenes de biblioteca o álbum de un iPad.
 
-    { x : 0,
-      y :  32,
-      width : 320,
-      height : 480,
-      arrowDir : Camera.PopoverArrowDirection.ARROW_ANY
-    };
+    {x: 0, y: 32, ancho: 320, altura: 480, arrowDir: Camera.PopoverArrowDirection.ARROW_ANY};
     
 
 ### CameraPopoverOptions
@@ -400,7 +371,7 @@ Tenga en cuenta que puede cambiar el tamaño de la popover para ajustar la direc
 
 Elimina intermedio fotos tomadas por la cámara de almacenamiento temporal.
 
-    navigator.camera.cleanup( cameraSuccess, cameraError );
+    Navigator.Camera.cleanup (cameraSuccess, cameraError);
     
 
 ### Descripción
@@ -413,12 +384,8 @@ Elimina intermedio archivos de imagen que se mantienen en depósito temporal des
 
 ### Ejemplo
 
-    navigator.camera.cleanup(onSuccess, onFail);
+    Navigator.Camera.cleanup (onSuccess, onFail);
     
-    function onSuccess() {
-        console.log("Camera cleanup success.")
-    }
+    function onSuccess() {console.log ("cámara limpieza éxito.")}
     
-    function onFail(message) {
-        alert('Failed because: ' + message);
-    }
+    function onFail(message) {alert (' falló porque: ' + mensaje);}
