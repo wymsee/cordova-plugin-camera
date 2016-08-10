@@ -148,9 +148,10 @@ cameraExport.getPicture = function(successCallback, errorCallback, options) {
     var popoverOptions = getValue(options.popoverOptions, null);
     var cameraDirection = getValue(options.cameraDirection, Camera.Direction.BACK);
     var flashMode = getValue(options.flashMode, Camera.FlashMode.AUTO);
+    var allowMulti = getValue(options.allowMulti, false);
 
     var args = [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType,
-                mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions, cameraDirection, flashMode];
+                mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions, cameraDirection, flashMode, allowMulti];
 
     exec(successCallback, errorCallback, "Camera", "takePicture", args);
     // XXX: commented out
