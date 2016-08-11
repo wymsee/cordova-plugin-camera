@@ -1243,6 +1243,7 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
         state.putBoolean("allowEdit", this.allowEdit);
         state.putBoolean("correctOrientation", this.correctOrientation);
         state.putBoolean("saveToPhotoAlbum", this.saveToPhotoAlbum);
+        state.putBoolean("allowMulti", this.allowMulti);
 
         if(this.croppedUri != null) {
             state.putString("croppedUri", this.croppedUri.toString());
