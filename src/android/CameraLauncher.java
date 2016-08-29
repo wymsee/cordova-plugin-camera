@@ -104,6 +104,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     private boolean correctOrientation;     // Should the pictures orientation be corrected
     private boolean orientationCorrected;   // Has the picture's orientation been corrected
     private boolean allowEdit;              // Should we allow the user to crop the image.
+    private boolean allowMulti;             // Mode to take multiple pictures without closing camera
 
     protected final static String[] permissions = { Manifest.permission.READ_EXTERNAL_STORAGE };
 
@@ -146,6 +147,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             this.allowEdit = args.getBoolean(7);
             this.correctOrientation = args.getBoolean(8);
             this.saveToPhotoAlbum = args.getBoolean(9);
+            this.allowMulti = args.getBoolean(13);
 
             // If the user specifies a 0 or smaller width/height
             // make it -1 so later comparisons succeed
@@ -246,12 +248,17 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         this.numPics = queryImgDB(whichContentStore()).getCount();
 
         // Let's use the intent and see what happens
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent;
+        if (this.allowMulti) {
+            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        } else {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        // Specify file so that large image is captured and returned
-        File photo = createCaptureFile(encodingType);
-        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-        this.imageUri = Uri.fromFile(photo);
+            // Specify file so that large image is captured and returned
+            File photo = createCaptureFile(encodingType);
+            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+            this.imageUri = Uri.fromFile(photo);
+        }
 
         if (this.cordova != null) {
             // Let's check to make sure the camera is actually installed. (Legacy Nexus 7 code)
@@ -761,8 +768,17 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
                 }
             }
 
-            // If cancelled
+            // If cancelled or returning from camera app
             else if (resultCode == Activity.RESULT_CANCELED) {
+                if (this.allowMulti) {
+                    Uri contentStore = whichContentStore();
+                    Cursor cursor = queryImgDB(contentStore);
+                    int currentNumOfImages = cursor.getCount();
+                    if (currentNumOfImages > numPics) {
+                        this.callbackContext.success((String)null);
+                        return;
+                    }
+                }
                 this.failPicture("Camera cancelled.");
             }
 
@@ -1227,6 +1243,7 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
         state.putBoolean("allowEdit", this.allowEdit);
         state.putBoolean("correctOrientation", this.correctOrientation);
         state.putBoolean("saveToPhotoAlbum", this.saveToPhotoAlbum);
+        state.putBoolean("allowMulti", this.allowMulti);
 
         if(this.croppedUri != null) {
             state.putString("croppedUri", this.croppedUri.toString());
@@ -1251,6 +1268,7 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
         this.allowEdit = state.getBoolean("allowEdit");
         this.correctOrientation = state.getBoolean("correctOrientation");
         this.saveToPhotoAlbum = state.getBoolean("saveToPhotoAlbum");
+        this.allowMulti = state.getBoolean("allowMulti");
 
         if(state.containsKey("croppedUri")) {
             this.croppedUri = Uri.parse(state.getString("croppedUri"));
